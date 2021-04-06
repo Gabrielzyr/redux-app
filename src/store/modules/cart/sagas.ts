@@ -1,5 +1,5 @@
-import { all, call, select, takeLatest } from 'redux-saga/effects'
-import { addProductToCartRequest } from './actions'
+import { all, call, put, select, takeLatest } from 'redux-saga/effects'
+import { addProductToCartFailure, addProductToCartRequest, addProductToCartSuccess } from './actions'
 import {IState} from '../../'
 import { AxiosResponse } from 'axios';
 import api from '../../../services/api';
@@ -21,11 +21,9 @@ function* checkProductStock({payload}: CheckProductStockRequest) {
   const availableStockResponse: AxiosResponse<IStockResponse> = yield call(api.get, `stock/${product.id}`)
 
   if (availableStockResponse.data.quantity > currentQuantity) {
-    console.log('deu certo')
-
+    yield put(addProductToCartSuccess(product))
   } else {
-    console.log('falta de estoque')
-
+    yield put(addProductToCartFailure(product.id))
   }
 }
 
